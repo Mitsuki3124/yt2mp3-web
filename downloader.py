@@ -63,7 +63,9 @@ HISTORIAL_FILE  = os.path.join(OUTPUT_DIR, "historial_descargas.json")
 MAX_REINTENTOS  = 3
 COOKIES_SPOTIFY = "/storage/emulated/0/_Carpetas VCS/cookies.txt"
 COOKIES_YTMUSIC = "/storage/emulated/0/music.youtube.com_cookies.txt"
-COOKIES_YOUTUBE = "/storage/emulated/0/cookies.txt"
+COOKIES_YOUTUBE_RENDER = "/etc/secrets/cookies.txt"
+COOKIES_YOUTUBE_ANDROID = "/storage/emulated/0/cookies.txt"
+COOKIES_YOUTUBE = COOKIES_YOUTUBE_RENDER if os.path.exists(COOKIES_YOUTUBE_RENDER) else COOKIES_YOUTUBE_ANDROID
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
