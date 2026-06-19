@@ -63,10 +63,29 @@ HISTORIAL_FILE  = os.path.join(OUTPUT_DIR, "historial_descargas.json")
 MAX_REINTENTOS  = 3
 COOKIES_SPOTIFY = "/storage/emulated/0/_Carpetas VCS/cookies.txt"
 COOKIES_YTMUSIC = "/storage/emulated/0/music.youtube.com_cookies.txt"
-COOKIES_YOUTUBE_RENDER = "/etc/secrets/cookies.txt"
-COOKIES_YOUTUBE_ANDROID = "/storage/emulated/0/cookies.txt"
-COOKIES_YOUTUBE = COOKIES_YOUTUBE_RENDER if os.path.exists(COOKIES_YOUTUBE_RENDER) else COOKIES_YOUTUBE_ANDROID
 
+import base64
+import tempfile
+
+def get_cookies_from_env():
+    """Toma la variable YOUTUBE_COOKIES_B64 y la convierte en un archivo temporal de cookies."""
+    cookies_b64 = os.environ.get('YOUTUBE_COOKIES_B64')
+    if not cookies_b64:
+        return None
+    try:
+        cookies_content = base64.b64decode(cookies_b64).decode('utf-8')
+        temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False)
+        temp_file.write(cookies_content)
+        temp_file.close()
+        return temp_file.name
+    except Exception:
+        return None
+
+# Ahora, donde antes usabas COOKIES_YOUTUBE, usa esta función:
+COOKIES_YOUTUBE = get_cookies_from_env()  # Esto intentará usar la variable de entorno
+if not COOKIES_YOUTUBE:
+    # Si no hay variable, fallback a la ruta de Android
+    COOKIES_YOUTUBE = "/storage/emulated/0/cookies.txt" if os.path.exists("/storage/emulated/0/cookies.txt") else None
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 descargas_sesion = 0
