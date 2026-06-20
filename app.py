@@ -138,7 +138,7 @@ def run_audio_task(task_id, url, quality, audio_format, options):
                             result = descargar_audio(
                                 yt_url,
                                 quality,
-                                cookies_file=None,
+                                cookies_file=COOKIES_YOUTUBE,
                                 spotify_meta=track,
                                 track_num=i,
                                 total_tracks=total,
