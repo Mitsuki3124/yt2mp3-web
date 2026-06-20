@@ -168,7 +168,7 @@ def run_audio_task(task_id, url, quality, audio_format, options):
         result = descargar_audio(
             yt_url,
             quality,
-            cookies_file=None,
+            cookies_file=COOKIES_YOUTUBE,
             spotify_meta=spotify_meta,
             track_num=1,
             total_tracks=1,
@@ -194,7 +194,7 @@ def run_video_task(task_id, url, quality, video_format, options):
             url,
             calidad_video=quality,
             formato_video=video_format,
-            cookies_file=None,
+            cookies_file=COOKIES_YOUTUBE,
             opciones=options,
             track_num=1,
             total_tracks=1
