@@ -68,24 +68,46 @@ import base64
 import tempfile
 
 def get_cookies_from_env():
-    """Toma la variable YOUTUBE_COOKIES_B64 y la convierte en un archivo temporal de cookies."""
+    """Convierte la variable YOUTUBE_COOKIES_B64 en un archivo temporal de cookies."""
     cookies_b64 = os.environ.get('YOUTUBE_COOKIES_B64')
     if not cookies_b64:
+        print("⚠️ No se encontró la variable YOUTUBE_COOKIES_B64 en el entorno.")
         return None
+
     try:
+        # Decodificar contenido Base64 y convertirlo en texto
         cookies_content = base64.b64decode(cookies_b64).decode('utf-8')
+
+        # Validar que el contenido parezca un archivo de cookies válido
+        if not cookies_content.strip():
+            print("⚠️ El contenido de cookies está vacío.")
+            return None
+
+        # Crear archivo temporal con las cookies
         temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False)
         temp_file.write(cookies_content)
         temp_file.close()
+
+        print(f"✅ Cookies cargadas correctamente desde variable de entorno: {temp_file.name}")
         return temp_file.name
-    except Exception:
+    except Exception as e:
+        print(f"❌ Error al decodificar cookies: {e}")
         return None
 
-# Ahora, donde antes usabas COOKIES_YOUTUBE, usa esta función:
-COOKIES_YOUTUBE = get_cookies_from_env()  # Esto intentará usar la variable de entorno
+# Obtener cookies desde variable de entorno o fallback
+COOKIES_YOUTUBE = get_cookies_from_env()
 if not COOKIES_YOUTUBE:
-    # Si no hay variable, fallback a la ruta de Android
-    COOKIES_YOUTUBE = "/storage/emulated/0/cookies.txt" if os.path.exists("/storage/emulated/0/cookies.txt") else None
+    # Fallback a la ruta de Android (solo si el archivo existe)
+    fallback_path = "/storage/emulated/0/cookies.txt"
+    if os.path.exists(fallback_path):
+        COOKIES_YOUTUBE = fallback_path
+        print(f"✅ Usando cookies desde archivo local: {fallback_path}")
+    else:
+        COOKIES_YOUTUBE = None
+        print("⚠️ No se encontraron cookies. Las descargas pueden fallar.")
+
+# Crear directorio de salida si no existe
+OUTPUT_DIR = "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 descargas_sesion = 0
